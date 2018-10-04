@@ -1,5 +1,8 @@
 #include <Wire.h>
+#include<SoftwareSerial.h>
 
+SoftwareSerial BT(10,11);
+String readdata;
 int gyro_x, gyro_y, gyro_z;
 long gyro_x_cal, gyro_y_cal, gyro_z_cal ,acc_x_cal , acc_y_cal , acc_z_cal;
 boolean set_gyro_angles;
@@ -38,12 +41,31 @@ void setup() {
   acc_x_cal /= 1000;
   acc_y_cal /= 1000;
   acc_z_cal /= 1000;
+
+  BT.begin(9600);
+  //Serial.begin(9600);
   
   Serial.begin(115200);
   loop_timer = micros();                                               //Reset the loop timer
 }
 
 void loop(){
+  
+  while (BT.available())
+  {
+    delay(10);
+    char c = BT.read();
+    readdata += c;
+    
+  }
+  if(readdata.length()>0)
+  {
+    BT.print(readdata);
+    readdata="";
+    
+  }
+  Serial.print("aaa/#");
+  
   //digitalWrite(motor, LOW);
   read_mpu_6050_data();   
  //Subtract the offset values from the raw gyro values
